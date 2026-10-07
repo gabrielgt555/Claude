@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Camada3D | Peças personalizadas em impressão 3D</title>
+<meta name="description" content="Chaveiros, letreiros, lembrancinhas e decoração personalizados em impressão 3D. Peça pelo WhatsApp.">
+<style>
+  :root{
+    --bg:#fafaf7; --card:#fff; --ink:#1b1b1f; --muted:#6b6b76; --line:#e7e6e0;
+    --brand:#ff5a1f; --brand-ink:#fff; --soft:#fff1ea;
+    --radius:16px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{--bg:#121214;--card:#1b1b1f;--ink:#f3f3f1;--muted:#a0a0aa;--line:#2b2b31;--soft:#2a1a12}
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 16px}
+  header{position:sticky;top:0;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);z-index:10}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:60px}
+  .logo{font-weight:800;font-size:1.2rem;letter-spacing:-.02em}
+  .logo span{color:var(--brand)}
+  .btn{display:inline-block;background:var(--brand);color:var(--brand-ink);padding:12px 20px;border-radius:999px;font-weight:700;text-decoration:none;border:0;cursor:pointer;font-size:1rem}
+  .btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+  .btn.sm{padding:8px 16px;font-size:.9rem}
+  .hero{padding:56px 0 40px;display:grid;gap:32px;align-items:center}
+  @media(min-width:800px){.hero{grid-template-columns:1.2fr 1fr}}
+  h1{font-size:clamp(2rem,6vw,3.4rem);line-height:1.05;letter-spacing:-.03em;margin:0 0 16px}
+  h1 em{font-style:normal;color:var(--brand)}
+  .lead{color:var(--muted);font-size:1.1rem;max-width:34em}
+  .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
+  .badges{display:flex;gap:16px;flex-wrap:wrap;margin-top:24px;color:var(--muted);font-size:.9rem}
+  section{padding:40px 0}
+  h2{font-size:1.7rem;letter-spacing:-.02em;margin:0 0 6px}
+  .sub{color:var(--muted);margin:0 0 24px}
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+  .tab{border:1.5px solid var(--line);background:var(--card);color:var(--ink);padding:8px 16px;border-radius:999px;cursor:pointer;font-size:.95rem}
+  .tab[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+  .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;display:flex;flex-direction:column;gap:8px}
+  .ico{font-size:2.4rem;width:64px;height:64px;display:grid;place-items:center;background:var(--soft);border-radius:14px}
+  .card h3{margin:4px 0 0;font-size:1.05rem}
+  .card p{margin:0;color:var(--muted);font-size:.92rem;flex:1}
+  .price{font-weight:800}
+  .price small{font-weight:500;color:var(--muted)}
+  .custom{display:grid;gap:24px;background:var(--card);border:1px solid var(--line);border-radius:24px;padding:24px}
+  @media(min-width:800px){.custom{grid-template-columns:1fr 1fr;padding:32px}}
+  label{display:block;font-weight:600;font-size:.9rem;margin:12px 0 6px}
+  input,select{width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font-size:1rem}
+  .swatches{display:flex;gap:8px;flex-wrap:wrap}
+  .sw{width:34px;height:34px;border-radius:50%;border:3px solid transparent;outline:1.5px solid var(--line);cursor:pointer}
+  .sw[aria-pressed="true"]{border-color:var(--bg);outline:2.5px solid var(--ink)}
+  .preview{display:grid;place-items:center;border-radius:20px;background:repeating-linear-gradient(45deg,var(--soft),var(--soft) 12px,transparent 12px,transparent 24px);min-height:220px;padding:20px}
+  .tag{display:flex;align-items:center;gap:14px;padding:22px 28px;border-radius:22px;color:#fff;font-weight:800;font-size:2rem;box-shadow:0 8px 0 rgba(0,0,0,.18);max-width:100%;word-break:break-word;text-align:center}
+  .tag i{width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,.55);display:block;flex:none}
+  .total{margin-top:16px;font-size:1.1rem}
+  .steps{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));counter-reset:s}
+  .step{counter-increment:s;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
+  .step::before{content:counter(s);display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--brand);color:#fff;font-weight:800;margin-bottom:8px}
+  .step h3{margin:0 0 4px;font-size:1rem}
+  .step p{margin:0;color:var(--muted);font-size:.92rem}
+  .bulk{background:var(--ink);color:var(--bg);border-radius:24px;padding:32px;display:grid;gap:16px}
+  .bulk h2{margin:0}
+  .bulk p{margin:0;opacity:.8}
+  details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:10px}
+  summary{cursor:pointer;font-weight:600}
+  details p{color:var(--muted);margin:8px 0 0}
+  footer{border-top:1px solid var(--line);padding:32px 0 96px;color:var(--muted);font-size:.9rem;text-align:center}
+  .fab{position:fixed;right:16px;bottom:16px;z-index:20;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <div class="logo" id="brand"></div>
+    <a class="btn sm" id="navCta" href="#">Pedir no WhatsApp</a>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="hero">
+    <div>
+      <h1>Peças <em>feitas pra você</em>, impressas em 3D.</h1>
+      <p class="lead">Chaveiros com nome, letreiros, lembrancinhas de festa e decoração. Você escolhe, a gente personaliza e imprime.</p>
+      <div class="cta">
+        <a class="btn" href="#personalizar">Personalizar agora</a>
+        <a class="btn ghost" href="#catalogo">Ver catálogo</a>
+      </div>
+      <div class="badges"><span>✔ Cores à escolha</span><span>✔ Feito sob encomenda</span><span>✔ Atacado para festas</span></div>
+    </div>
+    <div class="preview" aria-hidden="true">
+      <div class="tag" style="background:#ff5a1f"><i></i>Sua marca</div>
+    </div>
+  </div>
+
+  <section id="catalogo">
+    <h2>Catálogo</h2>
+    <p class="sub">Preços "a partir de". O valor final depende de tamanho, cores e quantidade.</p>
+    <div class="tabs" id="tabs"></div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section id="personalizar">
+    <h2>Monte o seu</h2>
+    <p class="sub">Digite o nome, escolha a cor e envie o pedido já pronto pelo WhatsApp.</p>
+    <div class="custom">
+      <div>
+        <label for="peca">Peça</label>
+        <select id="peca"></select>
+        <label for="nome">Nome ou texto</label>
+        <input id="nome" maxlength="20" value="Maria" autocomplete="off">
+        <label>Cor</label>
+        <div class="swatches" id="cores"></div>
+        <label for="qtd">Quantidade</label>
+        <input id="qtd" type="number" min="1" value="1">
+        <div class="total" id="total"></div>
+        <p style="color:var(--muted);font-size:.85rem;margin:6px 0 16px">Prévia ilustrativa. A peça real tem o acabamento da impressão 3D.</p>
+        <a class="btn" id="enviar" href="#">Enviar pedido pelo WhatsApp</a>
+      </div>
+      <div class="preview"><div class="tag" id="prev"><i></i><span id="prevTxt"></span></div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="bulk">
+      <h2>Lembrancinhas para festa? 🎉</h2>
+      <p>Aniversário, chá de bebê, casamento, formatura. A partir de 20 unidades o preço cai, e você escolhe o tema e as cores da festa.</p>
+      <div><a class="btn" id="bulkCta" href="#">Pedir orçamento</a></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Como pedir</h2>
+    <p class="sub">Simples, sem cadastro.</p>
+    <div class="steps">
+      <div class="step"><h3>Escolha</h3><p>Veja o catálogo ou monte a sua peça acima.</p></div>
+      <div class="step"><h3>Envie</h3><p>O pedido vai pronto pro nosso WhatsApp.</p></div>
+      <div class="step"><h3>Aprove</h3><p>Combinamos valor, prazo e detalhes.</p></div>
+      <div class="step"><h3>Receba</h3><p>Imprimimos, embalamos e enviamos ou você retira.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Dúvidas</h2>
+    <details><summary>Qual o prazo?</summary><p>Peças pequenas ficam prontas em 2 a 4 dias úteis. Lotes grandes, combinamos na hora.</p></details>
+    <details><summary>Que material vocês usam?</summary><p>PLA, um filamento resistente, seguro e com ótimo acabamento. Não é indicado para locais muito quentes, como dentro do carro no sol.</p></details>
+    <details><summary>Posso mandar minha ideia ou logo?</summary><p>Pode. Mande pelo WhatsApp e avaliamos a viabilidade e o valor.</p></details>
+    <details><summary>Fazem em outras cores?</summary><p>Sim, temos várias cores. Se a que você quer não estiver na lista, pergunte.</p></details>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div id="foot"></div>
+    <div style="margin-top:6px"><a id="ig" href="#" style="color:inherit">Instagram</a></div>
+  </div>
+</footer>
+
+<a class="btn fab" id="fab" href="#">💬 WhatsApp</a>
+
+<script>
+/* ===== EDITE AQUI ===== */
+const CONFIG = {
+  nome: "Camada3D",                 // nome da marca
+  whatsapp: "5511999999999",        // DDI + DDD + número, só dígitos
+  instagram: "camada3d",            // @ sem o arroba
+};
+const CORES = [
+  {n:"Laranja",c:"#ff5a1f"},{n:"Preto",c:"#26262b"},{n:"Branco",c:"#cfcfc8"},
+  {n:"Azul",c:"#2f6fed"},{n:"Verde",c:"#22a36b"},{n:"Rosa",c:"#ec4899"},
+  {n:"Roxo",c:"#7c3aed"},{n:"Vermelho",c:"#d62839"},{n:"Amarelo",c:"#e8b400"},
+];
+// preco = "a partir de" em R$. Ajuste com a sua formula de custo.
+const CATEGORIAS = ["Todos","Personalizados","Festas","Organização","Geek","Casa e jardim","Pet"];
+const PRODUTOS = [
+  {n:"Chaveiro com nome",  cat:"Personalizados", ico:"🔑", preco:12, d:"Nome em relevo, em 1 ou 2 cores."},
+  {n:"Letreiro de porta",  cat:"Personalizados", ico:"🚪", preco:35, d:"Nome do quarto ou da criança, com furo ou fita dupla face."},
+  {n:"Placa de mesa",      cat:"Personalizados", ico:"🪧", preco:25, d:"Para escritório, balcão ou evento."},
+  {n:"Topo de bolo",       cat:"Festas",         ico:"🎂", preco:30, d:"Nome e idade, nas cores da festa."},
+  {n:"Lembrancinha de festa", cat:"Festas",      ico:"🎁", preco:6,  d:"Chaveiros e ímãs temáticos. Preço por unidade em lote."},
+  {n:"Marcador de taça",   cat:"Festas",         ico:"🥂", preco:5,  d:"Para casamentos e confraternizações."},
+  {n:"Suporte de headset", cat:"Organização",    ico:"🎧", preco:40, d:"Libera a mesa e deixa o setup arrumado."},
+  {n:"Organizador de cabos", cat:"Organização",  ico:"🔌", preco:15, d:"Kit com clipes para a mesa."},
+  {n:"Suporte de controle",cat:"Organização",    ico:"🎮", preco:30, d:"PS, Xbox ou Switch."},
+  {n:"Luminária litofania",cat:"Geek",           ico:"💡", preco:90, d:"Sua foto aparece quando acende. Presente que emociona."},
+  {n:"Suporte de boneco",  cat:"Geek",           ico:"🧸", preco:25, d:"Expositor para Funko e colecionáveis."},
+  {n:"Miniatura / busto",  cat:"Geek",           ico:"🗿", preco:45, d:"Sob consulta, conforme o modelo."},
+  {n:"Vaso geométrico",    cat:"Casa e jardim",  ico:"🪴", preco:28, d:"Para suculentas e cactos."},
+  {n:"Porta-canetas",      cat:"Casa e jardim",  ico:"✏️", preco:22, d:"Organização com estilo."},
+  {n:"Plaquinha pet",      cat:"Pet",            ico:"🐾", preco:15, d:"Nome e telefone do seu pet."},
+  {n:"Comedouro / suporte",cat:"Pet",            ico:"🐶", preco:45, d:"Elevado, para comer com conforto."},
+];
+/* ======================== */
+
+const $ = s => document.querySelector(s);
+const brl = v => v.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+const wa = msg => `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(msg)}`;
+
+// marca e links
+$("#brand").innerHTML = CONFIG.nome.replace(/(\d+)$/, "<span>$1</span>");
+document.title = `${CONFIG.nome} | Peças personalizadas em impressão 3D`;
+$("#foot").textContent = `© ${new Date().getFullYear()} ${CONFIG.nome}. Impressão 3D sob encomenda.`;
+$("#ig").href = `https://instagram.com/${CONFIG.instagram}`;
+$("#ig").textContent = `@${CONFIG.instagram}`;
+const hello = wa(`Olá, ${CONFIG.nome}! Vim pelo site e queria fazer um pedido.`);
+["#navCta","#fab"].forEach(s => $(s).href = hello);
+$("#bulkCta").href = wa("Olá! Quero um orçamento de lembrancinhas para uma festa. Tema, cores e quantidade: ");
+
+// catálogo
+let filtro = "Todos";
+function renderCatalogo(){
+  $("#tabs").innerHTML = CATEGORIAS.map(c =>
+    `<button class="tab" data-c="${c}" aria-pressed="${c===filtro}">${c}</button>`).join("");
+  const lista = PRODUTOS.filter(p => filtro==="Todos" || p.cat===filtro);
+  $("#grid").innerHTML = lista.map(p => `
+    <article class="card">
+      <div class="ico" aria-hidden="true">${p.ico}</div>
+      <h3>${p.n}</h3>
+      <p>${p.d}</p>
+      <div class="price"><small>a partir de</small> ${brl(p.preco)}</div>
+      <a class="btn ghost sm" target="_blank" rel="noopener"
+         href="${wa(`Olá! Tenho interesse em: ${p.n}.`)}">Pedir</a>
+    </article>`).join("");
+}
+$("#tabs").addEventListener("click", e => {
+  const b = e.target.closest(".tab"); if(!b) return;
+  filtro = b.dataset.c; renderCatalogo();
+});
+renderCatalogo();
+
+// personalizador
+const personalizaveis = PRODUTOS.filter(p => ["Personalizados","Festas"].includes(p.cat));
+$("#peca").innerHTML = personalizaveis.map((p,i) => `<option value="${i}">${p.n}, ${brl(p.preco)}</option>`).join("");
+let cor = CORES[0];
+$("#cores").innerHTML = CORES.map((c,i) =>
+  `<button class="sw" title="${c.n}" aria-label="${c.n}" data-i="${i}" style="background:${c.c}" aria-pressed="${i===0}"></button>`).join("");
+$("#cores").addEventListener("click", e => {
+  const b = e.target.closest(".sw"); if(!b) return;
+  cor = CORES[+b.dataset.i];
+  document.querySelectorAll(".sw").forEach(s => s.setAttribute("aria-pressed", s===b));
+  atualizar();
+});
+function atualizar(){
+  const p = personalizaveis[+$("#peca").value];
+  const nome = $("#nome").value.trim() || "Seu nome";
+  const qtd = Math.max(1, parseInt($("#qtd").value) || 1);
+  $("#prev").style.background = cor.c;
+  $("#prev").style.color = cor.n==="Branco" || cor.n==="Amarelo" ? "#222" : "#fff";
+  $("#prevTxt").textContent = nome;
+  const total = p.preco * qtd;
+  $("#total").innerHTML = `Estimativa: <b>${brl(total)}</b>` + (qtd>=20 ? " (lote com desconto, confirmamos no orçamento)" : "");
+  $("#enviar").href = wa(`Olá! Quero encomendar:\n• Peça: ${p.n}\n• Texto: ${nome}\n• Cor: ${cor.n}\n• Quantidade: ${qtd}\n• Estimativa: ${brl(total)}`);
+  $("#enviar").target = "_blank";
+}
+["peca","nome","qtd"].forEach(id => $("#"+id).addEventListener("input", atualizar));
+atualizar();
+</script>
+</body>
+</html>
