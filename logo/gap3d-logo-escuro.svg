@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="1000" height="1000" role="img" aria-label="GAP 3D">
+  <defs>
+    <!-- as "frestas" horizontais simulam as camadas da impressao 3D (gap = espaco entre camadas) -->
+    <mask id="layers" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000">
+      <rect width="1000" height="1000" fill="#fff"/>
+      <rect x="0" y="387" width="1000" height="8" fill="#000"/>
+      <rect x="0" y="461" width="1000" height="8" fill="#000"/>
+      <rect x="0" y="535" width="1000" height="8" fill="#000"/>
+    </mask>
+  </defs>
+  <circle cx="500" cy="500" r="500" fill="#1B1B1F"/>
+  <circle cx="500" cy="500" r="455" fill="none" stroke="#FF5A1F" stroke-width="12"/>
+  <g transform="translate(0,-35)">
+    <g mask="url(#layers)" fill="none" stroke="#FFFFFF" stroke-width="42" stroke-linecap="square" stroke-linejoin="miter">
+      <path d="M334 341 H196 V589 H334 V465 H265"/>
+      <path d="M431 589 V341 H569 V589 M431 465 H569"/>
+      <path d="M666 589 V341 H804 V465 H666"/>
+    </g>
+    <g fill="none" stroke="#FF5A1F" stroke-width="20" stroke-linejoin="miter">
+      <path d="M420 652 H480 V740 H420 M450 696 H480"/>
+      <path d="M510 652 H545 Q580 652 580 696 Q580 740 545 740 H510 Z"/>
+      <path d="M300 696 H385 M615 696 H700" stroke-linecap="round" stroke-width="10"/>
+    </g>
+  </g>
+</svg>
