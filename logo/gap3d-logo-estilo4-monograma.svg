@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="1000" height="1000" role="img" aria-label="GAP 3D">
+<defs>
+<linearGradient id="g" gradientUnits="userSpaceOnUse" x1="0" y1="200" x2="0" y2="620"><stop offset="0" stop-color="#FFD60A"/><stop offset=".55" stop-color="#FF5A1F"/><stop offset="1" stop-color="#E5195E"/></linearGradient>
+<mask id="m" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000"><rect width="1000" height="1000" fill="#fff"/><rect x="0" y="262" width="1000" height="3" fill="#000"/><rect x="0" y="300" width="1000" height="5" fill="#000"/><rect x="0" y="338" width="1000" height="7" fill="#000"/><rect x="0" y="376" width="1000" height="9" fill="#000"/><rect x="0" y="414" width="1000" height="11" fill="#000"/><rect x="0" y="452" width="1000" height="13" fill="#000"/><rect x="0" y="490" width="1000" height="15" fill="#000"/><rect x="0" y="528" width="1000" height="17" fill="#000"/><rect x="0" y="566" width="1000" height="19" fill="#000"/></mask>
+</defs>
+<circle cx="500" cy="500" r="500" fill="#16161A"/>
+<circle cx="500" cy="500" r="455" fill="none" stroke="#2E2E36" stroke-width="12"/>
+<g mask="url(#m)"><g transform="translate(370,205) scale(2.0)" fill="none" stroke="url(#g)" stroke-width="38" stroke-linecap="butt" stroke-linejoin="round"><path d="M120 40 Q100 5 65 5 Q10 5 10 100 Q10 195 65 195 Q120 195 120 150 V105 H68"/></g></g>
+<g transform="translate(388,690) scale(.3)" fill="none" stroke="#fff" stroke-width="34" stroke-linecap="round" stroke-linejoin="round">
+<path d="M120 40 Q100 5 65 5 Q10 5 10 100 Q10 195 65 195 Q120 195 120 150 V105 H68"/><path transform="translate(160,0)" d="M10 195 L65 5 L120 195 M30 130 H100"/><path transform="translate(320,0)" d="M15 195 V5 H70 Q120 5 120 55 Q120 105 70 105 H15"/>
+<path transform="translate(520,40) scale(.9)" d="M8 10 H52 Q78 10 78 36 Q78 58 50 60 H30 M50 60 Q82 60 82 88 Q82 112 52 112 H8" stroke="#FF5A1F"/><path transform="translate(630,40) scale(.9)" d="M12 8 V112 H42 Q86 112 86 60 Q86 8 42 8 Z" stroke="#FF5A1F"/></g>
+</svg>

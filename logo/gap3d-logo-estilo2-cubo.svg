@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="1000" height="1000" role="img" aria-label="GAP 3D">
+<circle cx="500" cy="500" r="500" fill="#1B1B1F"/>
+<circle cx="500" cy="500" r="455" fill="none" stroke="#FF5A1F" stroke-width="12"/>
+<g transform="translate(0,45)">
+<polygon points="500,210 604,270 500,330 396,270" fill="#FF8A4C" stroke="#FF8A4C" stroke-width="2" stroke-linejoin="round"/>
+<polygon points="396,270 500,330 500,450 396,390" fill="#FF5A1F" stroke="#FF5A1F" stroke-width="2" stroke-linejoin="round"/>
+<polygon points="500,330 604,270 604,390 500,450" fill="#C93F0B" stroke="#C93F0B" stroke-width="2" stroke-linejoin="round"/>
+<path d="M396 300 L500 360" stroke="#1B1B1F" stroke-opacity=".35" stroke-width="5"/>
+<path d="M500 360 L604 300" stroke="#1B1B1F" stroke-opacity=".35" stroke-width="5"/>
+<path d="M396 330 L500 390" stroke="#1B1B1F" stroke-opacity=".35" stroke-width="5"/>
+<path d="M500 390 L604 330" stroke="#1B1B1F" stroke-opacity=".35" stroke-width="5"/>
+<path d="M396 360 L500 420" stroke="#1B1B1F" stroke-opacity=".35" stroke-width="5"/>
+<path d="M500 420 L604 360" stroke="#1B1B1F" stroke-opacity=".35" stroke-width="5"/>
+
+<g transform="translate(342,515) scale(.7)" fill="none" stroke="#fff" stroke-width="30" stroke-linecap="round" stroke-linejoin="round">
+<path d="M120 40 Q100 5 65 5 Q10 5 10 100 Q10 195 65 195 Q120 195 120 150 V105 H68"/><path transform="translate(160,0)" d="M10 195 L65 5 L120 195 M30 130 H100"/><path transform="translate(320,0)" d="M15 195 V5 H70 Q120 5 120 55 Q120 105 70 105 H15"/></g>
+<g transform="translate(445,700) scale(.5)" fill="none" stroke="#FF5A1F" stroke-width="22" stroke-linecap="round" stroke-linejoin="round">
+<path d="M8 10 H52 Q78 10 78 36 Q78 58 50 60 H30 M50 60 Q82 60 82 88 Q82 112 52 112 H8"/><path transform="translate(100,0)" d="M12 8 V112 H42 Q86 112 86 60 Q86 8 42 8 Z"/></g>
+</g>
+</svg>
