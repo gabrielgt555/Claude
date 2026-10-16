@@ -3,8 +3,9 @@ import numpy as np, cv2, mapbox_earcut as earcut
 from shapely.geometry import Polygon
 
 IMG, OUT = sys.argv[1], sys.argv[2]
-W_MM, H_MM = 210.0, 150.0   # 21 x 15 cm
-BASE_H, RELIEF_H = 2.0, 2.0  # base branca + relevo vermelho 2 mm
+BASE_H, RELIEF_H = float(sys.argv[3]), float(sys.argv[4])  # base branca + relevo vermelho (mm)
+W_MM, H_MM = 210.0, 140.0   # proporcao original da imagem (3:2)
+LAYER = 0.2
 
 img = cv2.imread(IMG)
 h, w = img.shape[:2]
@@ -70,27 +71,27 @@ for i, c in enumerate(cnts):
 
 add_box(0, 0, W_MM, H_MM, 0, BASE_H)
 
-# relevo desloca-se de volta para sobre a base: mesh sem sobreposição (base z0-2, relevo z2-4)
-def mesh_xml(V, T, pid, oid, name):
-    vs = ''.join(f'<vertex x="{x:.4f}" y="{y:.4f}" z="{z:.4f}"/>' for x, y, z in V)
-    ts = ''.join(f'<triangle v1="{a}" v2="{b_}" v3="{c}"/>' for a, b_, c in T)
-    return (f'<object id="{oid}" name="{name}" type="model" pid="1" pindex="{pid}"><mesh>'
-            f'<vertices>{vs}</vertices><triangles>{ts}</triangles></mesh></object>')
-
-# ajuste: a base é a caixa; tris/verts globais referem-se só à caixa
+# objeto unico (base + relevo) com PAUSA na primeira camada do relevo
+verts.extend(rv); off = len(verts) - len(rv)
+tris.extend((a+off, b_+off, c+off) for a, b_, c in rt)
+vs = ''.join(f'<vertex x="{x:.4f}" y="{y:.4f}" z="{z:.4f}"/>' for x, y, z in verts)
+ts = ''.join(f'<triangle v1="{a}" v2="{b_}" v3="{c}"/>' for a, b_, c in tris)
+nome = f'Placa AMARE C26 A153 (base {BASE_H:g}mm + relevo {RELIEF_H:g}mm)'
 model = ('<?xml version="1.0" encoding="UTF-8"?>'
  '<model unit="millimeter" xml:lang="pt-BR" xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02">'
- '<metadata name="Title">Placa AMARE C26 A153</metadata><resources>'
- '<basematerials id="1"><base name="Branco" displaycolor="#FFFFFF"/><base name="Vermelho" displaycolor="#E00000"/></basematerials>'
- + mesh_xml(verts, tris, 0, 2, 'Base branca')
- + mesh_xml(rv, rt, 1, 3, 'Relevo vermelho 2mm')
- + '</resources><build>'
- f'<item objectid="2" transform="1 0 0 0 1 0 0 0 1 {128-W_MM/2} {128-H_MM/2} 0"/>'
- f'<item objectid="3" transform="1 0 0 0 1 0 0 0 1 {128-W_MM/2} {128-H_MM/2} 0"/>'
+ '<metadata name="BambuStudio:3mfVersion">1</metadata>'
+ f'<metadata name="Title">{nome}</metadata><resources>'
+ f'<object id="1" name="{nome}" type="model"><mesh><vertices>{vs}</vertices><triangles>{ts}</triangles></mesh></object>'
+ '</resources><build>'
+ f'<item objectid="1" transform="1 0 0 0 1 0 0 0 1 {128-W_MM/2} {128-H_MM/2} 0"/>'
  '</build></model>')
-
+pause_z = round(BASE_H + LAYER, 2)  # pausa antes de imprimir a 1a camada vermelha
+gcodes = ('<?xml version="1.0" encoding="utf-8"?>\n<custom_gcodes_per_layer>\n<plate>\n<plate_info id="1"/>\n'
+ f'<layer top_z="{pause_z}" type="1" extruder="1" color="" extra="Trocar para filamento VERMELHO" gcode="M601"/>\n'
+ '<mode value="SingleExtruder"/>\n</plate>\n</custom_gcodes_per_layer>\n')
 with zipfile.ZipFile(OUT, 'w', zipfile.ZIP_DEFLATED) as z:
-    z.writestr('[Content_Types].xml', '<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="model" ContentType="application/vnd.ms-package.3dmanufacturing-3dmodel+xml"/></Types>')
+    z.writestr('[Content_Types].xml', '<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="model" ContentType="application/vnd.ms-package.3dmanufacturing-3dmodel+xml"/><Default Extension="xml" ContentType="application/xml"/></Types>')
     z.writestr('_rels/.rels', '<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Target="/3D/3dmodel.model" Id="rel0" Type="http://schemas.microsoft.com/3dmanufacturing/2013/01/3dmodel"/></Relationships>')
     z.writestr('3D/3dmodel.model', model)
-print('contornos:', len(cnts), 'vertices relevo:', len(rv), 'tris relevo:', len(rt))
+    z.writestr('Metadata/custom_gcode_per_layer.xml', gcodes)
+print(OUT, 'pausa em z =', pause_z, '| tris', len(tris))
