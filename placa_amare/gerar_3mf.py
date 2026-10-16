@@ -8,19 +8,30 @@ W_MM, H_MM = 210.0, 140.0   # proporcao original da imagem (3:2)
 LAYER = 0.2
 
 img = cv2.imread(IMG)
-h, w = img.shape[:2]
-b, g, r = [img[:, :, i].astype(int) for i in range(3)]
-mask = ((r - np.maximum(g, b) > 70) & (r > 110)).astype(np.uint8) * 255
-mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, np.ones((5, 5), np.uint8))
-mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, np.ones((3, 3), np.uint8))
-mask = (cv2.GaussianBlur(mask,(0,0),2.0) > 127).astype(np.uint8)*255
-cv2.imwrite(OUT.replace('.3mf', '_mascara.png'), 255 - mask)
+S = 4  # super-amostragem para bordas suaves
+big = cv2.resize(img, None, fx=S, fy=S, interpolation=cv2.INTER_CUBIC).astype(np.int16)
+h, w = big.shape[:2]
+# "vermelhidao": ignora sombras cinzas e pega os brilhos rosados dentro das letras
+red = cv2.GaussianBlur((big[:, :, 2] - np.maximum(big[:, :, 0], big[:, :, 1])).astype(np.float32), (0, 0), 2.0)
+mask = (red > 35).astype(np.uint8) * 255
+# preenche furinhos finos (reflexos de brilho); furos reais (detalhes do coracao) sao mais largos
+inv = 255 - mask
+n, lab, st, _ = cv2.connectedComponentsWithStats(inv, connectivity=8)
+dist = cv2.distanceTransform(inv, cv2.DIST_L2, 5)
+for i in range(1, n):
+    x, y, ww, hh, area = st[i]
+    if x == 0 or y == 0 or x + ww >= w or y + hh >= h: continue  # fundo externo
+    reg = lab[y:y+hh, x:x+ww] == i
+    if dist[y:y+hh, x:x+ww][reg].max() < 11:
+        mask[y:y+hh, x:x+ww][reg] = 255
+mask = (cv2.GaussianBlur(mask, (0, 0), 3.0) > 127).astype(np.uint8) * 255
+cv2.imwrite(OUT.replace('.3mf', '_mascara.png'), 255 - cv2.resize(mask, None, fx=1/S, fy=1/S, interpolation=cv2.INTER_AREA))
 
 sx, sy = W_MM / w, H_MM / h
 cnts, hier = cv2.findContours(mask, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_NONE)
 hier = hier[0]
 def pts(c):
-    c = cv2.approxPolyDP(c, 1.2, True)[:, 0, :]
+    c = cv2.approxPolyDP(c, 1.6, True)[:, 0, :]
     return [(x * sx, (h - y) * sy) for x, y in c]  # y invertido (imagem -> mesa)
 
 verts, tris = [], []
@@ -57,12 +68,12 @@ def extrude(poly, z0, z1, V, T):
 # polígonos (externo + furos) -> shapely, garantindo orientação correta
 rv, rt = [], []
 for i, c in enumerate(cnts):
-    if hier[i][3] != -1 or cv2.contourArea(c) < 12: continue
+    if hier[i][3] != -1 or cv2.contourArea(c) < 400: continue
     ext = Polygon(pts(c))
     holes = []
     k = hier[i][2]
     while k != -1:
-        if cv2.contourArea(cnts[k]) >= 60: holes.append(pts(cnts[k]))
+        if cv2.contourArea(cnts[k]) >= 400: holes.append(pts(cnts[k]))
         k = hier[k][0]
     p = Polygon(ext.exterior.coords, holes)
     if not p.is_valid: p = p.buffer(0)
