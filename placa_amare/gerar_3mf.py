@@ -79,7 +79,6 @@ ts = ''.join(f'<triangle v1="{a}" v2="{b_}" v3="{c}"/>' for a, b_, c in tris)
 nome = f'Placa AMARE C26 A153 (base {BASE_H:g}mm + relevo {RELIEF_H:g}mm)'
 model = ('<?xml version="1.0" encoding="UTF-8"?>'
  '<model unit="millimeter" xml:lang="pt-BR" xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02">'
- '<metadata name="BambuStudio:3mfVersion">1</metadata>'
  f'<metadata name="Title">{nome}</metadata><resources>'
  f'<object id="1" name="{nome}" type="model"><mesh><vertices>{vs}</vertices><triangles>{ts}</triangles></mesh></object>'
  '</resources><build>'
@@ -90,8 +89,7 @@ gcodes = ('<?xml version="1.0" encoding="utf-8"?>\n<custom_gcodes_per_layer>\n<p
  f'<layer top_z="{pause_z}" type="1" extruder="1" color="" extra="Trocar para filamento VERMELHO" gcode="M601"/>\n'
  '<mode value="SingleExtruder"/>\n</plate>\n</custom_gcodes_per_layer>\n')
 with zipfile.ZipFile(OUT, 'w', zipfile.ZIP_DEFLATED) as z:
-    z.writestr('[Content_Types].xml', '<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="model" ContentType="application/vnd.ms-package.3dmanufacturing-3dmodel+xml"/><Default Extension="xml" ContentType="application/xml"/></Types>')
+    z.writestr('[Content_Types].xml', '<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="model" ContentType="application/vnd.ms-package.3dmanufacturing-3dmodel+xml"/></Types>')
     z.writestr('_rels/.rels', '<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Target="/3D/3dmodel.model" Id="rel0" Type="http://schemas.microsoft.com/3dmanufacturing/2013/01/3dmodel"/></Relationships>')
     z.writestr('3D/3dmodel.model', model)
-    z.writestr('Metadata/custom_gcode_per_layer.xml', gcodes)
 print(OUT, 'pausa em z =', pause_z, '| tris', len(tris))
