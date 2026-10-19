@@ -3,7 +3,9 @@ import sys, re, zipfile, numpy as np, trimesh
 # uso: gerar_pes.py placa_AMS.3mf saida.3mf esp_placa larg_pe prof_pe esp_base alt_parede esp_parede
 PLACA, OUT = sys.argv[1], sys.argv[2]
 ESP_PLACA, LARG, PROF, T, ALT, TP = map(float, sys.argv[3:9])
-INCL, FOLGA, MARG_FRENTE, GAP = 10.0, 0.25, 10.0, 8.0
+TF = float(sys.argv[9]) if len(sys.argv) > 9 else T            # espessura reforcada sob o encaixe
+MARG_FRENTE = float(sys.argv[10]) if len(sys.argv) > 10 else 10.0  # recuo do encaixe em relacao a frente do pe
+INCL, FOLGA, GAP = 10.0, 0.20, 8.0
 G = ESP_PLACA + 2 * FOLGA            # abertura do encaixe
 
 # perfil lateral (como no desenho): barra longa na base + 2 paredes finas inclinadas 10 graus para tras
@@ -14,8 +16,15 @@ def parede(offset):
 paredes = [parede(-(G / 2 + TP / 2)), parede(G / 2 + TP / 2)]
 rot = trimesh.transformations.rotation_matrix(np.radians(-INCL), (1, 0, 0))
 yc = MARG_FRENTE + TP + G / 2
-paredes = [p.apply_transform(rot).apply_translation((0, yc, T)) for p in paredes]
-barra = trimesh.creation.box(extents=(LARG, PROF, T)); barra.apply_translation((0, PROF / 2, T / 2))
+paredes = [p.apply_transform(rot).apply_translation((0, yc, TF)) for p in paredes]
+# perfil lateral da barra: bloco grosso (TF) sob o encaixe + rampa descendo ate a espessura T no fundo
+y_flat = yc + G / 2 + TP + 8.0
+y_ramp = min(PROF, y_flat + (TF - T) * 2.5)
+perfil = [(0, 0), (PROF, 0), (PROF, T), (y_ramp, T), (y_flat, TF), (0, TF)] if TF > T else [(0, 0), (PROF, 0), (PROF, T), (0, T)]
+from shapely.geometry import Polygon
+barra = trimesh.creation.extrude_polygon(Polygon(perfil), height=LARG)      # (u=y, v=z, w=x)
+barra.apply_transform(np.array([[0, 0, 1, 0], [1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1]], float))
+barra.apply_translation((-LARG / 2, 0, 0))
 pe = trimesh.boolean.union([barra] + paredes, engine='manifold')
 assert pe.is_watertight
 pe.apply_translation(-pe.bounds[0])
