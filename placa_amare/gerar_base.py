@@ -6,10 +6,11 @@ PLACA_E = float(sys.argv[2]) if len(sys.argv) > 2 else 2.4
 OUT = sys.argv[3] if len(sys.argv) > 3 else 'base_suporte_placa.3mf'
 
 FOLGA = 0.25               # folga por lado no encaixe
-PAREDE_LAT = 8.0           # parede nas laterais
+FATOR = float(sys.argv[5]) if len(sys.argv) > 5 else 1.0
+PAREDE_LAT = 8.0 * FATOR           # parede nas laterais
 PROF = float(sys.argv[4]) if len(sys.argv) > 4 else 12.0  # profundidade do encaixe
 INCL = 10.0                # inclinacao para tras (graus)
-BASE_P, BASE_A = 32.0, 16.0  # profundidade (Y) e altura (Z) do bloco
+BASE_P, BASE_A = 32.0 * FATOR, PROF + 8.0  # profundidade (Y) e altura (Z) do bloco
 
 L = PLACA_L + 2 * FOLGA + 2 * PAREDE_LAT
 bloco = trimesh.creation.box(extents=(L, BASE_P, BASE_A))
@@ -20,7 +21,7 @@ fenda = trimesh.creation.box(extents=(fenda_l, fenda_e, PROF * 3))
 fenda.apply_translation((0, 0, PROF * 1.5))                 # base da fenda em z=0
 R = trimesh.transformations.rotation_matrix(np.radians(-INCL), (1, 0, 0))
 fenda.apply_transform(R)                                     # topo inclina para tras (+Y)
-fenda.apply_translation((0, -3.0, BASE_A - PROF))            # fundo do encaixe a PROF do topo
+fenda.apply_translation((0, -3.0 * FATOR, BASE_A - PROF))            # fundo do encaixe a PROF do topo
 
 peca = bloco.difference(fenda, engine='manifold')
 assert peca.is_watertight, 'malha nao fechada'

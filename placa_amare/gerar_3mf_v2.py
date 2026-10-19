@@ -4,7 +4,7 @@ from shapely.geometry import Polygon
 
 IMG, OUT = sys.argv[1], sys.argv[2]
 BASE_H, RELIEF_H = float(sys.argv[3]), float(sys.argv[4])  # base branca + relevo vermelho (mm)
-LARG_MM = 100.0        # largura da imagem original = 100 mm (mesma escala ja impressa)
+LARG_MM = float(sys.argv[6]) if len(sys.argv) > 6 else 100.0        # largura da imagem original = 100 mm (mesma escala ja impressa)
 MARGEM_BAIXO = float(sys.argv[5]) if len(sys.argv) > 5 else 9.0  # faixa branca embaixo (fica dentro do suporte)
 ESCALA_TEXTO = 0.92    # reducao de logo + C26 + A153
 LAYER = 0.2
