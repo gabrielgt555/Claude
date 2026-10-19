@@ -77,10 +77,14 @@ for i, c in enumerate(cnts):
     if not p.is_valid: p = p.buffer(0)
     polys.append(p)
 
-moldura = max(polys, key=lambda p: p.area)
+moldura_orig = max(polys, key=lambda p: p.area)
+moldura = moldura_orig
+if moldura.interiors:   # remove brilhos do efeito 3D (furos pequenos) e mantem so a abertura principal
+    maior = max(moldura.interiors, key=lambda r: Polygon(r).area)
+    moldura = Polygon(moldura.exterior, [maior])
 xmin, ymin, xmax, ymax = moldura.bounds
 ix0, iy0, ix1, iy1 = Polygon(moldura.interiors[0]).bounds   # area util dentro da moldura
-resto = [p for p in polys if p is not moldura]
+resto = [p for p in polys if p is not moldura_orig]
 esq = [p for p in resto if p.centroid.x < 420 * S]            # AMARE + barra
 dir_ = [p for p in resto if p.centroid.x >= 420 * S]           # logo + C26 + A153
 bar_right = max(p.bounds[2] for p in esq)

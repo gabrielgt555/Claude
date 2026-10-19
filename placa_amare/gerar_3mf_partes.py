@@ -77,17 +77,28 @@ for i, c in enumerate(cnts):
     if not p.is_valid: p = p.buffer(0)
     polys.append(p)
 
-moldura = max(polys, key=lambda p: p.area)
+moldura_orig = max(polys, key=lambda p: p.area)
+moldura = moldura_orig
+if moldura.interiors:   # remove brilhos do efeito 3D (furos pequenos) e mantem so a abertura principal
+    maior = max(moldura.interiors, key=lambda r: Polygon(r).area)
+    moldura = Polygon(moldura.exterior, [maior])
 xmin, ymin, xmax, ymax = moldura.bounds
 ix0, iy0, ix1, iy1 = Polygon(moldura.interiors[0]).bounds   # area util dentro da moldura
-resto = [p for p in polys if p is not moldura]
+resto = [p for p in polys if p is not moldura_orig]
 esq = [p for p in resto if p.centroid.x < 420 * S]            # AMARE + barra
 dir_ = [p for p in resto if p.centroid.x >= 420 * S]           # logo + C26 + A153
 bar_right = max(p.bounds[2] for p in esq)
 gx0, gy0, gx1, gy1 = unary_union(dir_).bounds
 alvo_cx, alvo_cy = (bar_right + ix1) / 2, (iy0 + iy1) / 2
 cx, cy = (gx0 + gx1) / 2, (gy0 + gy1) / 2
+eh_logo = [np.hypot(p.centroid.x - 846 * S, p.centroid.y - 250 * S) < 190 * S for p in dir_]
+linha2 = [p.centroid.y > 665 * S for p in dir_]
 dir_ = [affinity.translate(affinity.scale(p, ESCALA_TEXTO, ESCALA_TEXTO, origin=(cx, cy)), alvo_cx - cx, alvo_cy - cy) for p in dir_]
+# alinhamento: base do "A" de A153 na mesma linha da base do "E" de AMARE; C26 desce junto (a logo fica)
+letra_e = max((p for p in esq if p.bounds[3] - p.bounds[1] < 300 * S), key=lambda p: p.centroid.y)
+letra_a = min((p for p, l2, lg in zip(dir_, linha2, eh_logo) if l2 and not lg), key=lambda p: p.centroid.x)
+dy = letra_e.bounds[3] - letra_a.bounds[3]
+dir_ = [p if lg else affinity.translate(p, 0, dy) for p, lg in zip(dir_, eh_logo)]
 relevo = [moldura] + esq + dir_
 
 # base branca: contorno externo da moldura (sem borda) + faixa embaixo para encaixar no suporte
