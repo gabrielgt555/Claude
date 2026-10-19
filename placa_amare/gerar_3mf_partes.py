@@ -23,9 +23,15 @@ dist = cv2.distanceTransform(inv, cv2.DIST_L2, 5)
 for i in range(1, n):
     x, y, ww, hh, area = st[i]
     if x == 0 or y == 0 or x + ww >= w or y + hh >= h: continue  # fundo externo
+    if np.hypot(x + ww / 2 - 846 * S, y + hh / 2 - 250 * S) < 125 * S: continue  # nao fecha os detalhes da familia (logo)
     reg = lab[y:y+hh, x:x+ww] == i
     if dist[y:y+hh, x:x+ww][reg].max() < 11:
         mask[y:y+hh, x:x+ww][reg] = 255
+# abre um pouco os tracos finos da familia (logo) para o bico de 0,4 mm conseguir imprimir
+yy, xx = np.ogrid[:h, :w]
+zona = (xx - 846 * S) ** 2 + (yy - 250 * S) ** 2 < (125 * S) ** 2
+aberta = cv2.erode(mask, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5)))
+mask[zona] = aberta[zona]
 mask = (cv2.GaussianBlur(mask, (0, 0), 3.0) > 127).astype(np.uint8) * 255
 cv2.imwrite(OUT.replace('.3mf', '_mascara.png'), 255 - cv2.resize(mask, None, fx=1/S, fy=1/S, interpolation=cv2.INTER_AREA))
 
