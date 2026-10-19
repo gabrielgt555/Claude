@@ -55,6 +55,16 @@ else:
 model = ('<?xml version="1.0" encoding="UTF-8"?><model unit="millimeter" xml:lang="pt-BR" xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02"><resources>'
          + base_o + rel_o + comp_o + f'<object id="4" name="Pe suporte (imprimir 2)" type="model">{foot}</object>'
          + '</resources><build>' + items + '</build></model>')
+DUAS = len(sys.argv) > 11 and sys.argv[11] == 'duas_placas'
+if DUAS:   # placa na Placa 1 e pes na Placa 2 (a Placa 2 fica ao lado: passo = 1,2 x largura da mesa)
+    PASSO = 256 * 1.2
+    x0 = 128 + PASSO - (2 * fw + gap_pes) / 2; yb = 128 - fd / 2
+    items = (f'<item objectid="3" transform="1 0 0 0 1 0 0 0 1 {128 - W/2:.3f} {128 - H/2:.3f} 0"/>'
+             f'<item objectid="4" transform="1 0 0 0 1 0 0 0 1 {x0:.3f} {yb:.3f} 0"/>'
+             f'<item objectid="4" transform="1 0 0 0 1 0 0 0 1 {x0 + fw + gap_pes:.3f} {yb:.3f} 0"/>')
+    model = ('<?xml version="1.0" encoding="UTF-8"?><model unit="millimeter" xml:lang="pt-BR" xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02"><resources>'
+             + base_o + rel_o + comp_o + f'<object id="4" name="Pe suporte (imprimir 2)" type="model">{foot}</object>'
+             + '</resources><build>' + items + '</build></model>')
 SO_PES = len(sys.argv) > 11 and sys.argv[11] == 'so_pes'
 if SO_PES:   # projeto so com os dois pes (impressao em placa separada, cor unica)
     x0 = 128 - (2 * fw + gap_pes) / 2; yb = 128 - fd / 2
