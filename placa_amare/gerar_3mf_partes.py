@@ -99,7 +99,10 @@ letra_e = max((p for p in esq if p.bounds[3] - p.bounds[1] < 300 * S), key=lambd
 letra_a = min((p for p, l2, lg in zip(dir_, linha2, eh_logo) if l2 and not lg), key=lambda p: p.centroid.x)
 dy = letra_e.bounds[3] - letra_a.bounds[3]
 dir_ = [p if lg else affinity.translate(p, 0, dy) for p, lg in zip(dir_, eh_logo)]
-relevo = [moldura] + esq + dir_
+SEM_TEXTO = len(sys.argv) > 7 and sys.argv[7] == 'sem_texto'
+txt_c26 = [p for p, lg, l2 in zip(dir_, eh_logo, linha2) if not lg and not l2]
+txt_a153 = [p for p, lg, l2 in zip(dir_, eh_logo, linha2) if not lg and l2]
+relevo = [moldura] + esq + [p for p, lg in zip(dir_, eh_logo) if lg or not SEM_TEXTO]
 
 # base branca: contorno externo da moldura (sem borda) + faixa embaixo para encaixar no suporte
 margem_px = MARGEM_BAIXO / K
@@ -134,4 +137,8 @@ with zipfile.ZipFile(OUT, 'w', zipfile.ZIP_DEFLATED) as z:
     z.writestr('[Content_Types].xml', '<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="model" ContentType="application/vnd.ms-package.3dmanufacturing-3dmodel+xml"/></Types>')
     z.writestr('_rels/.rels', '<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Target="/3D/3dmodel.model" Id="rel0" Type="http://schemas.microsoft.com/3dmanufacturing/2013/01/3dmodel"/></Relationships>')
     z.writestr('3D/3dmodel.model', model)
+if SEM_TEXTO:
+    for nome, grupo in (('C26', txt_c26), ('A153', txt_a153)):
+        b = to_mm(unary_union(grupo)).bounds
+        print(f'  texto {nome}: largura {b[2]-b[0]:.1f} mm, altura {b[3]-b[1]:.1f} mm, centro a {(b[0]+b[2])/2 - W_MM/2:+.1f} mm (X) e {(b[1]+b[3])/2 - H_MM/2:+.1f} mm (Y) do centro da placa')
 print(OUT, f'{W_MM:.2f} x {H_MM:.2f} x {BASE_H+RELIEF_H:.1f} mm')
