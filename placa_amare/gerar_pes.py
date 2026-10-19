@@ -55,6 +55,13 @@ else:
 model = ('<?xml version="1.0" encoding="UTF-8"?><model unit="millimeter" xml:lang="pt-BR" xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02"><resources>'
          + base_o + rel_o + comp_o + f'<object id="4" name="Pe suporte (imprimir 2)" type="model">{foot}</object>'
          + '</resources><build>' + items + '</build></model>')
+SO_PES = len(sys.argv) > 11 and sys.argv[11] == 'so_pes'
+if SO_PES:   # projeto so com os dois pes (impressao em placa separada, cor unica)
+    x0 = 128 - (2 * fw + gap_pes) / 2; yb = 128 - fd / 2
+    items = (f'<item objectid="4" transform="1 0 0 0 1 0 0 0 1 {x0:.3f} {yb:.3f} 0"/>'
+             f'<item objectid="4" transform="1 0 0 0 1 0 0 0 1 {x0 + fw + gap_pes:.3f} {yb:.3f} 0"/>')
+    model = ('<?xml version="1.0" encoding="UTF-8"?><model unit="millimeter" xml:lang="pt-BR" xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02"><resources>'
+             + f'<object id="4" name="Pe suporte (imprimir 2)" type="model">{foot}</object>' + '</resources><build>' + items + '</build></model>')
 with zipfile.ZipFile(OUT, 'w', zipfile.ZIP_DEFLATED) as z:
     z.writestr('[Content_Types].xml', '<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="model" ContentType="application/vnd.ms-package.3dmanufacturing-3dmodel+xml"/></Types>')
     z.writestr('_rels/.rels', '<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Target="/3D/3dmodel.model" Id="rel0" Type="http://schemas.microsoft.com/3dmanufacturing/2013/01/3dmodel"/></Relationships>')
