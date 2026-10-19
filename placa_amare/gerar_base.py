@@ -12,11 +12,12 @@ PROF = float(sys.argv[4]) if len(sys.argv) > 4 else 12.0  # profundidade do enca
 INCL = 10.0                # inclinacao para tras (graus)
 BASE_P, BASE_A = 32.0 * FATOR, PROF + 8.0  # profundidade (Y) e altura (Z) do bloco
 
-L = PLACA_L + 2 * FOLGA + 2 * PAREDE_LAT
+LARG_BLOCO = float(sys.argv[6]) if len(sys.argv) > 6 else None  # largura menor que a placa: fenda vazada nas laterais
+L = LARG_BLOCO or (PLACA_L + 2 * FOLGA + 2 * PAREDE_LAT)
 bloco = trimesh.creation.box(extents=(L, BASE_P, BASE_A))
 bloco.apply_translation((0, 0, BASE_A / 2))
 
-fenda_l, fenda_e = PLACA_L + 2 * FOLGA, PLACA_E + 2 * FOLGA
+fenda_l, fenda_e = (L + 20 if LARG_BLOCO else PLACA_L + 2 * FOLGA), PLACA_E + 2 * FOLGA
 fenda = trimesh.creation.box(extents=(fenda_l, fenda_e, PROF * 3))
 fenda.apply_translation((0, 0, PROF * 1.5))                 # base da fenda em z=0
 R = trimesh.transformations.rotation_matrix(np.radians(-INCL), (1, 0, 0))
