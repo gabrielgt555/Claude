@@ -7,7 +7,7 @@ OUT = sys.argv[3] if len(sys.argv) > 3 else 'base_suporte_placa.3mf'
 
 FOLGA = 0.25               # folga por lado no encaixe
 PAREDE_LAT = 8.0           # parede nas laterais
-PROF = 12.0                # profundidade do encaixe
+PROF = float(sys.argv[4]) if len(sys.argv) > 4 else 12.0  # profundidade do encaixe
 INCL = 10.0                # inclinacao para tras (graus)
 BASE_P, BASE_A = 32.0, 16.0  # profundidade (Y) e altura (Z) do bloco
 
