@@ -19,3 +19,8 @@
 - Ao terminar, **reabrir o arquivo gerado e conferir** (script) objeto por objeto, e entregar ao usuário uma tabela curta com o que ficou gravado, para ele não precisar conferir tudo no programa. Dizer claramente que não foi aberto no Bambu Studio.
 - Malhas vindas de gerador de imagem para 3D podem trazer pintura multicolor (`paint_color` nos triângulos) que ativa troca de cor e torre de limpeza: remover quando o pedido for uma cor só.
 - Usar chaves válidas do Bambu (por exemplo `zig-zag` para o padrão "Retilíneo" do engomar) e ids únicos de objeto e de UUID ao juntar projetos.
+
+## Sempre dizer onde fica cada menu
+- Ao citar qualquer opção, botão ou ajuste do Bambu Studio, dizer **o caminho completo para achar**: aba (Preparar, Pré-visualização, Dispositivo), painel (Processo, Filamento, Impressora), aba de configuração (Qualidade, Força, Velocidade, Suporte, Outros), grupo e nome da opção.
+- Para ajustes por peça: lista de objetos à esquerda, aba **Objetos** (ao lado de **Global**), clicar na peça e achar a opção.
+- Dizer quando a opção só aparece com o botão **Avançado** ligado e quando é da impressora e não do arquivo (por exemplo, Z offset).
